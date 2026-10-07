@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>付家豪 · 作品集 Portfolio</title>
+<meta name="description" content="付家豪 — 视觉设计作品集">
+<style>
+  :root{
+    --bg:#0d0d0f; --bg2:#141417; --fg:#f2f2f4; --dim:#9a9aa2; --line:#26262b;
+    --maxw:1680px; --bar:60px;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f4f4f5; --bg2:#fff; --fg:#141417; --dim:#6b6b73; --line:#e2e2e6; }
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{
+    background:var(--bg);color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.6;overflow-x:hidden;
+  }
+  header{
+    position:fixed;top:0;left:0;right:0;height:var(--bar);z-index:60;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 clamp(14px,3vw,40px);
+    background:color-mix(in srgb,var(--bg) 78%,transparent);
+    backdrop-filter:saturate(180%) blur(14px);-webkit-backdrop-filter:saturate(180%) blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex;align-items:baseline;gap:10px;font-weight:600;letter-spacing:.02em}
+  .brand b{font-size:15px}
+  .brand span{font-size:11.5px;color:var(--dim);font-weight:400;letter-spacing:.14em;text-transform:uppercase}
+  .tools{display:flex;align-items:center;gap:10px}
+  .counter{font-size:11.5px;color:var(--dim);font-variant-numeric:tabular-nums;letter-spacing:.06em;margin-right:4px}
+  .btn{
+    display:inline-flex;align-items:center;gap:7px;
+    padding:8px 15px;border-radius:999px;font-size:12.5px;font-weight:600;
+    background:var(--fg);color:var(--bg);text-decoration:none;border:1px solid var(--fg);
+    transition:opacity .18s,transform .18s;white-space:nowrap;
+  }
+  .btn:hover{opacity:.82;transform:translateY(-1px)}
+  .btn svg{width:13px;height:13px}
+  .btn.ghost{background:transparent;color:var(--fg);border-color:var(--line)}
+  .btn.ghost:hover{border-color:var(--fg);opacity:1}
+  @media(max-width:620px){ .brand span{display:none} .counter{display:none} }
+  #prog{position:fixed;top:var(--bar);left:0;height:2px;width:0;background:var(--fg);z-index:61;transition:width .1s linear}
+  .hero{
+    padding:calc(var(--bar) + clamp(56px,11vh,130px)) clamp(14px,3vw,40px) clamp(36px,7vh,80px);
+    max-width:var(--maxw);margin:0 auto;
+  }
+  .hero h1{font-size:clamp(34px,7.2vw,80px);line-height:1.02;letter-spacing:-.02em;font-weight:700;margin-bottom:18px}
+  .hero .sub{font-size:clamp(13px,1.5vw,16px);color:var(--dim);max-width:46em}
+  .hero .rule{height:1px;background:var(--line);margin:clamp(28px,5vh,52px) 0 0}
+  main{max-width:var(--maxw);margin:0 auto;padding:0 clamp(14px,3vw,40px) clamp(60px,10vh,120px)}
+  .pg{
+    position:relative;width:100%;margin-bottom:clamp(18px,3vw,34px);
+    border-radius:clamp(8px,1vw,16px);overflow:hidden;
+    background:var(--bg2) center/cover no-repeat;
+    box-shadow:0 1px 2px rgba(0,0,0,.22),0 12px 34px -12px rgba(0,0,0,.45);
+    cursor:zoom-in;
+  }
+  @media (prefers-color-scheme: light){ .pg{box-shadow:0 1px 2px rgba(0,0,0,.06),0 12px 30px -14px rgba(0,0,0,.22)} }
+  .pg::before{content:"";display:block;padding-top:var(--ar,56.25%)}
+  .pg.tall{max-width:min(100%,860px);margin-left:auto;margin-right:auto}
+  .pg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .45s ease}
+  .pg img.on{opacity:1}
+  .pg .no{
+    position:absolute;left:12px;bottom:10px;z-index:2;
+    font-size:10.5px;letter-spacing:.14em;color:#fff;opacity:.5;
+    text-shadow:0 1px 4px rgba(0,0,0,.8);font-variant-numeric:tabular-nums;pointer-events:none;
+  }
+  footer{border-top:1px solid var(--line);padding:clamp(34px,6vh,60px) clamp(14px,3vw,40px)}
+  .fw{max-width:var(--maxw);margin:0 auto;display:flex;flex-wrap:wrap;gap:22px 44px;align-items:flex-end;justify-content:space-between}
+  footer h2{font-size:clamp(20px,3vw,30px);font-weight:700;letter-spacing:-.01em;margin-bottom:8px}
+  footer p{font-size:12.5px;color:var(--dim)}
+  .fmeta{font-size:12.5px;color:var(--dim);text-align:right}
+  #lb{position:fixed;inset:0;z-index:100;background:rgba(6,6,8,.96);display:none;align-items:center;justify-content:center}
+  #lb.on{display:flex}
+  #lb img{max-width:100vw;max-height:100vh;object-fit:contain;display:block}
+  #lb .x,#lb .nav{
+    position:absolute;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);
+    color:#fff;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;font-size:17px;line-height:1;user-select:none;transition:background .18s;backdrop-filter:blur(8px)
+  }
+  #lb .x{top:16px;right:16px;font-size:21px}
+  #lb .nav:hover,#lb .x:hover{background:rgba(255,255,255,.2)}
+  #lb .prev{left:14px;top:50%;transform:translateY(-50%)}
+  #lb .next{right:14px;top:50%;transform:translateY(-50%)}
+  #lb .cnt{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.6);font-size:11.5px;letter-spacing:.16em;font-variant-numeric:tabular-nums}
+  #top{
+    position:fixed;right:18px;bottom:18px;z-index:59;width:42px;height:42px;border-radius:50%;
+    background:var(--fg);color:var(--bg);border:none;cursor:pointer;display:none;
+    align-items:center;justify-content:center;box-shadow:0 6px 20px -6px rgba(0,0,0,.5);font-size:15px;
+  }
+  #top.on{display:flex}
+  @media(max-width:620px){ #lb .nav{width:38px;height:38px} }
+  @media print{ header,#prog,#top,#lb{display:none!important} .pg{break-inside:avoid} }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><b>付家豪</b><span>Visual Design Portfolio</span></div>
+  <div class="tools">
+    <span class="counter" id="cnt">01 / 66</span>
+    <a class="btn ghost" href="FuJiahao_Portfolio.pdf" download>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      PDF
+    </a>
+  </div>
+</header>
+<div id="prog"></div>
+
+<section class="hero">
+  <h1>作品集<br>Portfolio</h1>
+  <p class="sub">视觉设计 · 品牌与电商视觉 / 游戏官网与 KV / 三维包装与 IP 形象</p>
+  <div class="rule"></div>
+</section>
+
+<main id="book"></main>
+
+<footer>
+  <div class="fw">
+    <div>
+      <h2>付家豪</h2>
+      <p>视觉设计师 · 作品集 2026</p>
+    </div>
+    <div class="fmeta">
+      <a class="btn" href="FuJiahao_Portfolio.pdf" download>下载完整 PDF</a>
+    </div>
+  </div>
+</footer>
+
+<button id="top" title="回到顶部">↑</button>
+<div id="lb">
+  <img id="lbi" alt="">
+  <div class="x" id="lbx">×</div>
+  <div class="nav prev" id="lbp">‹</div>
+  <div class="nav next" id="lbn">›</div>
+  <div class="cnt" id="lbc"></div>
+</div>
+
+<script>
+(async function(){
+  var book=document.getElementById('book');
+  var M;
+  try{ M = await (await fetch('pages/manifest.json',{cache:'no-cache'})).json(); }
+  catch(e){ book.innerHTML='<p style="padding:40px 0;color:var(--dim)">加载失败，请刷新页面。</p>'; return; }
+  var N=M.pages, IT=M.items;
+  var cnt=document.getElementById('cnt');
+  cnt.textContent='01 / '+String(N).padStart(2,'0');
+
+  var frag=document.createDocumentFragment();
+  for(var i=0;i<N;i++){
+    var it=IT[i];
+    var d=document.createElement('div');
+    d.className='pg'+(it.r>1.8?' tall':'');
+    d.style.setProperty('--ar',(it.r*100)+'%');
+    d.dataset.i=i;
+    d.style.backgroundImage='url("pages/'+it.t+'")';
+    var im=document.createElement('img');
+    im.loading=i<3?'eager':'lazy'; im.decoding='async'; im.alt='作品集 第 '+(i+1)+' 页';
+    im.src='pages/'+it.f;
+    (function(el){ el.addEventListener('load',function(){ el.classList.add('on'); }); })(im);
+    d.appendChild(im);
+    var no=document.createElement('div'); no.className='no'; no.textContent=String(i+1).padStart(2,'0');
+    d.appendChild(no);
+    frag.appendChild(d);
+  }
+  book.appendChild(frag);
+
+  var lb=document.getElementById('lb'),lbi=document.getElementById('lbi'),
+      lbc=document.getElementById('lbc'),prog=document.getElementById('prog'),
+      topb=document.getElementById('top');
+  var cur=0;
+  function open(i){ cur=(i+N)%N; lbi.src='pages/'+IT[cur].f; lb.classList.add('on');
+    lbc.textContent=String(cur+1).padStart(2,'0')+' / '+String(N).padStart(2,'0');
+    document.body.style.overflow='hidden'; }
+  function close(){ lb.classList.remove('on'); document.body.style.overflow=''; }
+  book.addEventListener('click',function(e){ var p=e.target.closest('.pg'); if(p) open(+p.dataset.i); });
+  document.getElementById('lbx').onclick=close;
+  document.getElementById('lbp').onclick=function(e){e.stopPropagation();open(cur-1)};
+  document.getElementById('lbn').onclick=function(e){e.stopPropagation();open(cur+1)};
+  lb.addEventListener('click',function(e){ if(e.target===lb) close(); });
+  addEventListener('keydown',function(e){
+    if(!lb.classList.contains('on')) return;
+    if(e.key==='Escape')close(); else if(e.key==='ArrowLeft')open(cur-1); else if(e.key==='ArrowRight')open(cur+1);
+  });
+  var tx=0;
+  lb.addEventListener('touchstart',function(e){tx=e.touches[0].clientX},{passive:true});
+  lb.addEventListener('touchend',function(e){ var d=e.changedTouches[0].clientX-tx; if(Math.abs(d)>50) open(d<0?cur+1:cur-1); },{passive:true});
+
+  var pgs=[].slice.call(document.querySelectorAll('.pg'));
+  var raf=0;
+  function onScroll(){
+    if(raf) return; raf=requestAnimationFrame(function(){
+      raf=0;
+      var h=document.documentElement.scrollHeight-innerHeight;
+      prog.style.width=(h>0?Math.min(100,scrollY/h*100):0)+'%';
+      topb.classList.toggle('on',scrollY>innerHeight*0.8);
+      var mid=scrollY+innerHeight*0.42, best=0;
+      for(var i=0;i<pgs.length;i++){ if(pgs[i].offsetTop<=mid) best=i; else break; }
+      cnt.textContent=String(best+1).padStart(2,'0')+' / '+String(N).padStart(2,'0');
+    });
+  }
+  addEventListener('scroll',onScroll,{passive:true}); onScroll();
+  topb.onclick=function(){scrollTo({top:0,behavior:'smooth'})};
+})();
+</script>
+</body>
+</html>
