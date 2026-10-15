@@ -263,7 +263,7 @@
   }
   sweep(); setTimeout(sweep,500);
 
-  /* 停手 1.2s 后，只把"正对着屏幕中央"的那一张换成 2400px 高清：
+  /* 停手 1.2s 后，只把"正对着屏幕中央"的那一张换成 1800px 高清：
      缩略图在屏上被放大时才换（不放大就没必要多下），且永不批量预拉 */
   var upDone={},upTimer=0,slow=(navigator.connection&&/2g|3g/i.test(navigator.connection.effectiveType||''));
   function upTime(){
@@ -290,7 +290,7 @@
   setTimeout(upTime,1500);
   setTimeout(function(){if(!pill.classList.contains('off'))pill.textContent='正在载入当前画面的图片…（整册 '+N+' 页）';},5000);
 
-  /* 放大视图：缩略图秒开 → 后台换 2400px 高清图；列表里不再预拉高清图（原来最多拉 18MB） */
+  /* 放大视图：缩略图秒开 → 后台换 1800px 高清图；列表里不再预拉高清图（原来最多拉 18MB） */
   var lb=document.getElementById('lb'),lbi=document.getElementById('lbi'),lbc=document.getElementById('lbc'),
       prog=document.getElementById('prog'),topb=document.getElementById('top');
   var cur=0;
