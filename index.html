@@ -119,7 +119,34 @@
   #pill.off{opacity:0;visibility:hidden}
   @media(max-width:620px){ #lb .nav{width:38px;height:38px} }
   @media print{ header,#prog,#top,#lb{display:none!important} .pg{break-inside:avoid} }
+  /* 高清图后台替换中的提示 */
+  #lb .hq{position:fixed;bottom:16px;left:16px;z-index:2;display:inline-flex;align-items:center;gap:7px;
+    color:rgba(255,255,255,.62);font-size:11.5px;letter-spacing:.14em}
+  #lb .hq i{width:6px;height:6px;border-radius:50%;background:currentColor;animation:bl 1.4s ease-in-out infinite}
+  @keyframes bl{0%,100%{opacity:.25}50%{opacity:1}}
+  #lb.hq .hq{display:none}
+  /* 高清图后台替换中的提示 */
+  #lb .hq{position:fixed;bottom:16px;left:16px;z-index:2;display:inline-flex;align-items:center;gap:7px;
+    color:rgba(255,255,255,.62);font-size:11.5px;letter-spacing:.14em}
+  #lb .hq i{width:6px;height:6px;border-radius:50%;background:currentColor;animation:bl 1.4s ease-in-out infinite}
+  @keyframes bl{0%,100%{opacity:.25}50%{opacity:1}}
+  #lb.hq .hq{display:none}
+  /* 高清图后台替换中的提示 */
+  #lb .hq{position:fixed;bottom:16px;left:16px;z-index:2;display:inline-flex;align-items:center;gap:7px;
+    color:rgba(255,255,255,.62);font-size:11.5px;letter-spacing:.14em}
+  #lb .hq i{width:6px;height:6px;border-radius:50%;background:currentColor;animation:bl 1.4s ease-in-out infinite}
+  @keyframes bl{0%,100%{opacity:.25}50%{opacity:1}}
+  #lb.hq .hq{display:none}
 </style>
+<link rel="preload" as="image" href="pages/t001.webp" fetchpriority="high">
+<link rel="preload" as="image" href="pages/t002.webp" fetchpriority="high">
+<link rel="preload" as="image" href="pages/t003.webp">
+<link rel="preload" as="image" href="pages/t001.webp" fetchpriority="high">
+<link rel="preload" as="image" href="pages/t002.webp" fetchpriority="high">
+<link rel="preload" as="image" href="pages/t003.webp">
+<link rel="preload" as="image" href="pages/t001.webp" fetchpriority="high">
+<link rel="preload" as="image" href="pages/t002.webp" fetchpriority="high">
+<link rel="preload" as="image" href="pages/t003.webp">
 </head>
 <body>
 <header>
@@ -159,6 +186,9 @@
 <div id="lb">
   <div class="tip" id="lbtip">长图 · 可上下滚动查看全图</div>
   <img id="lbi" alt="">
+  <div class="hq"><i></i>高清图载入中…</div>
+  <div class="hq"><i></i>高清图载入中…</div>
+  <div class="hq"><i></i>高清图载入中…</div>
   <div class="x" id="lbx">×</div>
   <div class="nav prev" id="lbp">‹</div>
   <div class="nav next" id="lbn">›</div>
@@ -166,76 +196,120 @@
 </div>
 
 <script>
-(async function(){
-  var book=document.getElementById('book');
-  var M;
-  try{ M = await (await fetch('pages/manifest.json',{cache:'no-cache'})).json(); }
-  catch(e){ book.innerHTML='<p style="padding:40px 0;color:var(--dim)">加载失败，请刷新页面。</p>'; return; }
-  var N=M.pages, IT=M.items;
-  var cnt=document.getElementById('cnt');
+(function(){
+  /* 每页 高/宽 比例内联：骨架立刻出现，不再等 manifest.json 回来（首屏"空白"的根因） */
+  var R=[0.5625,0.5625,0.5625,0.5625,0.5625,0.5625,0.5625,0.5625,0.5625,0.5625,0.5625,0.5625,0.5625,0.5625,0.5625,0.5625,0.5625,0.5625,0.5625,0.6308,0.5625,0.5625,0.5625,0.5625,0.5625,0.5625,0.5625,0.5625,0.5625,0.5625,0.7937,0.7467,0.5625,0.9779,0.5625,0.7462,0.7462,0.5625,0.7467,0.7467,0.5625,0.5625,0.5625,0.5625,0.5637,0.7892,0.8421,0.7017,0.7017,0.7017,0.7017,0.7017,0.7017,0.5625,3.7729,2.7179,3.0229,0.5625,2.6429,1.3762,0.5625,0.5654,0.75,1.5437,0.6821,1.3746,0.5625];
+  var N=R.length, TALL=1.8;
+  var pad=function(n){return String(n).padStart(3,'0');};
+  var th=function(i){return 'pages/t'+pad(i+1)+'.webp';};
+  var fu=function(i){return 'pages/p'+pad(i+1)+'.webp';};
+  var book=document.getElementById('book'),cnt=document.getElementById('cnt'),pill=document.getElementById('pill');
   cnt.textContent='01 / '+String(N).padStart(2,'0');
-
-  var pill=document.getElementById('pill');
-  var loaded=0;
-  var frag=document.createDocumentFragment();
+  var tiles=[],frag=document.createDocumentFragment();
   for(var i=0;i<N;i++){
-    var it=IT[i];
     var d=document.createElement('div');
-    d.className='pg'+(it.r>1.8?' tall':'');
-    d.style.setProperty('--ar',(it.r*100)+'%');
+    d.className='pg'+(R[i]>TALL?' tall':'');
+    d.style.setProperty('--ar',(R[i]*100)+'%');
     d.dataset.i=i;
-    d.style.backgroundImage='url("pages/'+it.t+'")';   /* 缩略图先当底色占位 */
     var im=document.createElement('img');
-    im.loading=i<2?'eager':'lazy'; im.decoding='async'; im.alt='作品集 第 '+(i+1)+' 页';
-    im.src='pages/'+it.t;                                /* 列表先出 1280px 缩略图（体积约 1/4） */
-    im.dataset.full='pages/'+it.f;
-    im.addEventListener('load',function(){
-      this.classList.add('on');
-      var t=this.closest('.pg'); if(t) t.classList.add('ready');
-      if(this.dataset.counted) return;              /* 缩略图换原图时会再触发一次，不重复计数 */
-      this.dataset.counted='1'; loaded++;
-      if(loaded>=Math.min(6,N)) pill.classList.add('off');
-    });
+    im.alt='作品集 第 '+(i+1)+' 页'; im.decoding='async';
+    im.loading=i<3?'eager':'lazy';
+    if(i<3&&'fetchPriority' in im) im.fetchPriority='high';
+    im.dataset.src=th(i);                       /* 先不下载，进视口才排队 */
     d.appendChild(im);
-    var no=document.createElement('div'); no.className='no'; no.textContent=String(i+1).padStart(2,'0');
-    d.appendChild(no);
-    frag.appendChild(d);
+    var no=document.createElement('div'); no.className='no'; no.textContent=pad(i+1);
+    d.appendChild(no); frag.appendChild(d); tiles.push(d);
   }
   book.appendChild(frag);
 
-  /* 接近视口时再换成 2400px 原图：首屏只拉缩略图，滚动到哪张换哪张 */
-  if('IntersectionObserver' in window){
-    var io=new IntersectionObserver(function(es){
-      es.forEach(function(e){
-        if(!e.isIntersecting) return;
-        io.unobserve(e.target);
-        var im=e.target.querySelector('img');
-        if(!im||im.dataset.done||!im.dataset.full) return;
-        var full=new Image();
-        full.decoding='async';
-        full.onload=function(){ im.dataset.done='1'; im.src=im.dataset.full; };
-        full.onerror=function(){ im.dataset.done='1'; };
-        full.src=im.dataset.full;
-      });
-    },{rootMargin:'150% 0px'});
-    [].slice.call(book.querySelectorAll('.pg')).forEach(function(p){ io.observe(p); });
+  /* 下载队列：并发上限 4，保证首屏那几张优先，不再一次开 67 个请求 */
+  var q=[],act=0,MAX=4,loaded=0;
+  function pump(){while(act<MAX&&q.length){var f=q.shift();act++;f(function(){act--;pump();});}}
+  function checkPill(){                        /* 当前视口内的图都出来了，就把提示条收掉 */
+    if(pill.classList.contains('off')) return;
+    var vh=innerHeight||800;
+    for(var i=0;i<tiles.length;i++){
+      var r=tiles[i].getBoundingClientRect();
+      if(r.top<vh&&r.bottom>0&&!tiles[i].classList.contains('ready')) return;
+    }
+    pill.classList.add('off');
   }
+  function need(d){
+    var im=d.querySelector('img');
+    if(!im||im.dataset.q) return;
+    im.dataset.q='1';
+    q.push(function(done){
+      var t=new Image(); t.decoding='async';
+      t.onload=function(){
+        d.style.backgroundImage='url("'+im.dataset.src+'")';
+        im.src=im.dataset.src; im.classList.add('on'); d.classList.add('ready');
+        loaded++; checkPill(); upTime();
+        done();
+      };
+      t.onerror=function(){d.classList.add('ready');done();};
+      t.src=im.dataset.src;
+    });
+    pump();
+  }
+  /* 视口扫描：只加载可视区上下各 60% 范围内的格子。不用 IntersectionObserver——
+     行为可预测、无头/老浏览器表现一致，也便于量化验证 */
+  var pend=tiles.slice();
+  function sweep(){
+    var vh=innerHeight||800,lo=-vh*0.6,hi=vh*1.6;
+    for(var k=pend.length-1;k>=0;k--){
+      var d=pend[k],r=d.getBoundingClientRect();
+      if(r.bottom>lo&&r.top<hi){need(d);pend.splice(k,1);}
+    }
+  }
+  sweep(); setTimeout(sweep,500);
 
-  /* 网络实在慢时，把提示文案说清楚，而不是让访客对着黑屏猜 */
-  setTimeout(function(){
-    if(!pill.classList.contains('off')) pill.textContent='图片较大，仍在载入…（已出 ' + loaded + ' / ' + N + '）';
-  },4000);
+  /* 停手 1.2s 后，只把"正对着屏幕中央"的那一张换成 2400px 高清：
+     缩略图在屏上被放大时才换（不放大就没必要多下），且永不批量预拉 */
+  var upDone={},upTimer=0,slow=(navigator.connection&&/2g|3g/i.test(navigator.connection.effectiveType||''));
+  function upTime(){
+    if(slow||upTimer) return;
+    upTimer=setTimeout(function(){
+      upTimer=0;
+      var vh=innerHeight||800,mid=vh/2,best=-1,bd=1e9,r,i;
+      for(i=0;i<tiles.length;i++){
+        r=tiles[i].getBoundingClientRect();
+        if(r.bottom<0||r.top>vh) continue;
+        var dd=Math.abs((r.top+r.bottom)/2-mid);
+        if(dd<bd){bd=dd;best=i;}
+      }
+      if(best<0||upDone[best]) return;
+      var d=tiles[best],im=d.querySelector('img');
+      if(!im||!im.getAttribute('src')) return;
+      if(d.clientWidth*(window.devicePixelRatio||1)<=1280) return;   /* 没放大就不换 */
+      upDone[best]=1;
+      var f=new Image(); f.decoding='async';
+      f.onload=function(){im.src=fu(best);d.style.backgroundImage='url("'+fu(best)+'")';};
+      f.src=fu(best);
+    },1200);
+  }
+  setTimeout(upTime,1500);
+  setTimeout(function(){if(!pill.classList.contains('off'))pill.textContent='正在载入当前画面的图片…（整册 '+N+' 页）';},5000);
 
-  var lb=document.getElementById('lb'),lbi=document.getElementById('lbi'),
-      lbc=document.getElementById('lbc'),prog=document.getElementById('prog'),
-      topb=document.getElementById('top');
+  /* 放大视图：缩略图秒开 → 后台换 2400px 高清图；列表里不再预拉高清图（原来最多拉 18MB） */
+  var lb=document.getElementById('lb'),lbi=document.getElementById('lbi'),lbc=document.getElementById('lbc'),
+      prog=document.getElementById('prog'),topb=document.getElementById('top');
   var cur=0;
-  function open(i){ cur=(i+N)%N; lbi.src='pages/'+IT[cur].f;
-    lb.classList.toggle('long',IT[cur].r>1.8); lb.scrollTop=0; lb.classList.add('on');
+  function hq(i){
+    var tok=i,f=new Image(); f.decoding='async';
+    lbi.dataset.tok=String(i); lb.classList.remove('hq');
+    f.onload=function(){ if(lbi.dataset.tok!==String(tok)) return; lbi.src=fu(tok); lb.classList.add('hq'); };
+    f.src=fu(i);
+  }
+  function open(i){
+    cur=(i+N)%N;
+    lbi.src=th(cur);                                  /* 立刻有画面，不白等 */
+    lb.classList.toggle('long',R[cur]>TALL); lb.scrollTop=0; lb.classList.add('on');
     pill.classList.add('off');
     lbc.textContent=String(cur+1).padStart(2,'0')+' / '+String(N).padStart(2,'0');
-    document.body.style.overflow='hidden'; }
-  function close(){ lb.classList.remove('on'); document.body.style.overflow=''; }
+    document.body.style.overflow='hidden';
+    hq(cur);
+  }
+  function close(){ lb.classList.remove('on'); lb.classList.remove('hq'); document.body.style.overflow=''; }
   book.addEventListener('click',function(e){ var p=e.target.closest('.pg'); if(p) open(+p.dataset.i); });
   document.getElementById('lbx').onclick=close;
   document.getElementById('lbp').onclick=function(e){e.stopPropagation();open(cur-1)};
@@ -247,22 +321,27 @@
   });
   var tx=0;
   lb.addEventListener('touchstart',function(e){tx=e.touches[0].clientX},{passive:true});
-  lb.addEventListener('touchend',function(e){ var d=e.changedTouches[0].clientX-tx; if(Math.abs(d)>50) open(d<0?cur+1:cur-1); },{passive:true});
+  lb.addEventListener('touchend',function(e){var dd=e.changedTouches[0].clientX-tx; if(Math.abs(dd)>50) open(dd<0?cur+1:cur-1);},{passive:true});
 
-  var pgs=[].slice.call(document.querySelectorAll('.pg'));
-  var raf=0;
+  var pgs=tiles,raf=0;
   function onScroll(){
     if(raf) return; raf=requestAnimationFrame(function(){
       raf=0;
       var h=document.documentElement.scrollHeight-innerHeight;
       prog.style.width=(h>0?Math.min(100,scrollY/h*100):0)+'%';
       topb.classList.toggle('on',scrollY>innerHeight*0.8);
-      var mid=scrollY+innerHeight*0.42, best=0;
+      var mid=scrollY+innerHeight*0.42,best=0;
       for(var i=0;i<pgs.length;i++){ if(pgs[i].offsetTop<=mid) best=i; else break; }
       cnt.textContent=String(best+1).padStart(2,'0')+' / '+String(N).padStart(2,'0');
+      sweep();
     });
   }
-  addEventListener('scroll',onScroll,{passive:true}); onScroll();
+  addEventListener('scroll',function(){
+    if(upTimer){clearTimeout(upTimer);upTimer=0;}   /* 滚动中不升级，停手才升级 */
+    sweep(); onScroll(); upTime();
+  },{passive:true});
+  addEventListener('resize',sweep,{passive:true});
+  onScroll();
   topb.onclick=function(){scrollTo({top:0,behavior:'smooth'})};
 })();
 </script>
